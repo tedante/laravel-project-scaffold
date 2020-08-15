@@ -52,4 +52,8 @@ class User extends Authenticatable
     public function isActive($query){
       return $query->where('is_active', true);
     }
+
+    public function role() {
+        return $this->belongsTo('App\Models\Role');
+    }
 }
