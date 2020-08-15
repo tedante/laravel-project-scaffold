@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-
+use App\Models\Role;
 use Illuminate\Http\Request;
 
-class Controller extends BaseController
+class RoleController extends Controller
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
     /**
      * Display a listing of the resource.
      *
@@ -47,10 +41,10 @@ class Controller extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Config  $config
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function show(Config $config)
+    public function show(Role $role)
     {
         //
     }
@@ -58,10 +52,10 @@ class Controller extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Config  $config
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(Config $config)
+    public function edit(Role $role)
     {
         //
     }
@@ -70,10 +64,10 @@ class Controller extends BaseController
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Config  $config
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Config $config)
+    public function update(Request $request, Role $role)
     {
         //
     }
@@ -81,10 +75,10 @@ class Controller extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Config  $config
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Config $config)
+    public function destroy(Role $role)
     {
         //
     }
