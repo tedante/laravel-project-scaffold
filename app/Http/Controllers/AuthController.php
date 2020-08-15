@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Exceptions\UnprocessEntityException;
 
 class AuthController extends Controller
 {
@@ -51,6 +52,7 @@ class AuthController extends Controller
       'role' => $response['user']->role,
       'email_verified_at' => $response['user']->email_verified_at,
       'is_active' => $response['user']->is_active,
+      'login_at' => $response['user']->login_at,
       'access_token' => $response['token']->accessToken,
     ], 200);
   }
@@ -66,20 +68,29 @@ class AuthController extends Controller
       throw new AuthenticationException('Email or password you entered is incorrect!');
     }
 
-    $user = Auth::user();
-    $user = User::find($user->id);
-    
-    $tokenResult = $user->createToken('Laravel Password Grant Client');
-    $token = $tokenResult->token;
-    
-    $token->save();
 
-    $response = [
-      'user' => $user, 
-      'token' => $tokenResult 
-    ];
-
-    return $this->handleResponse($response);
+    try {
+      $user = Auth::user();
+      $user = User::find($user->id);
+      
+      if($user){
+        throw new UnprocessEntityException('Login failed! Proccess has been failed');
+      }
+      
+      $tokenResult = $user->createToken('Laravel Password Grant Client');
+      $token = $tokenResult->token;
+      
+      $token->save();
+  
+      $response = [
+        'user' => $user, 
+        'token' => $tokenResult 
+      ];
+  
+      return $this->handleResponse($response);
+    } catch (UnprocessEntityException $e) {
+      return response()->json($e);
+    }
   }
 
   public function logout(Request $request) {

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class CreateUsersTable extends Migration
 {
@@ -22,7 +23,9 @@ class CreateUsersTable extends Migration
             $table->string('role')->nullable();
             $table->boolean('is_active')->default(false);
             $table->string('avatar_link')->nullable();
+            $table->datetime('login_at')->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

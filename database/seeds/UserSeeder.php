@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@yopmail.com',
             'password' => Hash::make('admin'),
-            'role' => 'admin',
+            'role' => 'Admin',
             'email_verified_at' => Carbon::now(),
             'is_active' => true,
             'created_at' => Carbon::now()
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             'name' => 'User',
             'email' => 'user@yopmail.com',
             'password' => Hash::make('user'),
-            'role' => 'user',
+            'role' => 'User',
             'email_verified_at' => Carbon::now(),
             'is_active' => true,
             'created_at' => Carbon::now()
