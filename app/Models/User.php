@@ -1,15 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class User extends Authenticatable
 {
+    use SoftDeletes;
     use Notifiable;
     use HasApiTokens;
     use Notifiable;
@@ -20,7 +22,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 
+        'email', 
+        'password',
+        'role', 
+        'is_active', 
+        'email_verified_at',
     ];
 
     /**
@@ -39,5 +46,14 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
+
+    public function isActive($query){
+      return $query->where('is_active', true);
+    }
+
+    public function role() {
+        return $this->belongsTo('App\Models\Role');
+    }
 }
