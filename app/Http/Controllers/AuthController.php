@@ -47,11 +47,10 @@ class AuthController extends Controller
       'user_id' => $response['user']->id,
       'name' => $response['user']->name,
       'email' => $response['user']->email,
+      'role' => $response['user']->role->name ?? null,
       'token_type' => 'Bearer',
       'expires_at' => Carbon::parse($response['token']->token->expires_at)->toDateTimeString(),
-      'role' => $response['user']->role,
       'email_verified_at' => $response['user']->email_verified_at,
-      'is_active' => $response['user']->is_active,
       'login_at' => $response['user']->login_at,
       'access_token' => $response['token']->accessToken,
     ], 200);
@@ -71,9 +70,9 @@ class AuthController extends Controller
 
     try {
       $user = Auth::user();
-      $user = User::find($user->id);
+      $user = User::with('role')->find($user->id);
       
-      if($user){
+      if(!$user){
         throw new UnprocessEntityException('Login failed! Proccess has been failed');
       }
       
@@ -86,7 +85,7 @@ class AuthController extends Controller
         'user' => $user, 
         'token' => $tokenResult 
       ];
-  
+
       return $this->handleResponse($response);
     } catch (UnprocessEntityException $e) {
       return response()->json($e);
