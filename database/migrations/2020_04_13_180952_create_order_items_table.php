@@ -19,12 +19,9 @@ class CreateOrderItemsTable extends Migration
             $table->integer('material_id');
             $table->integer('qty');
             $table->text('notes')->nullable();
-            $table->decimal('discount_percentage', 2, 2);
-            $table->decimal('special_sale_percentage', 2, 2);
             $table->double('price');
-            $table->double('price_after_discount');
-            $table->double('price_after_sale');
             $table->double('final_price');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

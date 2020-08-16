@@ -18,6 +18,7 @@ class CreateMaterialImagesTable extends Migration
             $table->integer('material_id');
             $table->string('image_link')->nullable();
             $table->integer('position');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
