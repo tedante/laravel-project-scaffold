@@ -29,18 +29,18 @@ class BaseController extends Controller
         $requestQuery = request()->query();
 
         $limit = $requestQuery['perPage'] ?? 25;
+        
+        $model = new $this->model();
 
-        $data = $this->model::query();
+        $column = $model->getConnection()
+                        ->getSchemaBuilder()
+                        ->getColumnListing(
+                            $model->getTable()
+                        );
+
+        $data = $model::query();
 
         if (isset($requestQuery['filters'])) {
-            $produk = new $this->model();
-
-            $column = $produk->getConnection()
-                            ->getSchemaBuilder()
-                            ->getColumnListing(
-                                $produk->getTable()
-                            );
-
             foreach($requestQuery['filters'] as $key => $value) {
                 $filters = explode(",", $value);
                 
@@ -52,8 +52,10 @@ class BaseController extends Controller
             }
         }
 
-        if(isset($requestQuery['sortBy'])) {
-            $data = $data->orderBy($requestQuery['sortBy'], $requestQuery['dir']);
+        if(isset($requestQuery['sort-by'])) {
+            if (in_array($requestQuery['sort-by'], $column)) {
+                $data = $data->orderBy($requestQuery['sort-by'], $requestQuery['order-by']);
+            }
         }
         
         $data = $data->paginate($limit);
