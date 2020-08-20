@@ -1,14 +1,15 @@
+
 ## Laravel Project Scaffold
 This is a web application based on laravel framework with some code for a simple project.
 
 On this app is include:
-- "fruitcake/laravel-cors": "^1.0",
-- "guzzlehttp/guzzle": "^6.3",
-- "intervention/image": "^2.5",
-- "laravel/framework": "^7.0",
-- "laravel/passport": "^9.2",
-- "laravel/tinker": "^2.0",
-- "maatwebsite/excel": "^3.1"
+- [fruitcake/laravel-cors](https://github.com/fruitcake/laravel-cors/)
+- [guzzlehttp/guzzle](https://github.com/guzzlehttp/guzzle)
+- [intervention/image](https://github.com/intervention/image)
+- [laravel/framework](https://github.com/laravel/framework)
+- [laravel/passport](https://github.com/[laravel/passport)
+- [laravel/tinker](https://github.com/laravel/tinker)
+- [maatwebsite/excel](https://github.com/maatwebsite/excel)
 
 ### Installation
 1. Clone this repo.
