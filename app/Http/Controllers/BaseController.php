@@ -19,6 +19,8 @@ class BaseController extends Controller
 {
     protected $model;
 
+    protected $validation;
+
     /**
      * Display a listing of the resource.
      *
@@ -27,6 +29,21 @@ class BaseController extends Controller
     public function index()
     {
         $requestQuery = request()->query();
+
+        $validation = Validator::make($requestQuery, [
+          'page' => 'integer|min:1',
+          'perPage' => 'integer|min:1',
+          'sortBy' => 'in:prices,name,code,created_at',
+          'dir' => 'required_with:sortBy|in:asc,desc',
+          'min' => 'regex:/^\d+(\.\d{1,2})?$/',
+          'max' => 'regex:/^\d+(\.\d{1,2})?$/'
+        ]);
+    
+        if($validation->fails()) {
+            return response()->json([
+                "message" => $validation->messages()
+            ], 422);
+        }
 
         $limit = $requestQuery['perPage'] ?? 25;
         
@@ -81,7 +98,39 @@ class BaseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requestJson = $request->json()->all();
+
+        if (isset($this->validation)) {
+            $validation = Validator::make($requestJson, $this->validation);
+    
+            if($validation->fails()) {
+                return response()->json([
+                    "message" => $validation->messages()
+                ], 422);
+            }
+
+            $model = new $this->model();
+
+            try{
+                DB::beginTransaction();
+    
+                $data = $model->create($requestJson);
+
+                DB::commit();
+                
+                $data = $model::find($data->id);
+        
+                return response()->json($data);
+            } catch (Exception $e) {
+              DB::rollback();
+        
+              throw $e;
+            }
+        }
+
+        return response()->json([
+            "message" => "Validation is error"
+        ], 400);
     }
 
     /**
