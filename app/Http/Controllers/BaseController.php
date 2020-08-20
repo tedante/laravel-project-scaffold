@@ -33,8 +33,7 @@ class BaseController extends Controller
         $validation = Validator::make($requestQuery, [
           'page' => 'integer|min:1',
           'perPage' => 'integer|min:1',
-          'sortBy' => 'in:prices,name,code,created_at',
-          'dir' => 'required_with:sortBy|in:asc,desc',
+          'order-by' => 'required_with:sort-by|in:asc,desc',
           'min' => 'regex:/^\d+(\.\d{1,2})?$/',
           'max' => 'regex:/^\d+(\.\d{1,2})?$/'
         ]);
