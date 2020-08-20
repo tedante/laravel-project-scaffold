@@ -24,20 +24,41 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $requestQuery = $request->query();
+        $requestQuery = request()->query();
+
         $limit = $requestQuery['perPage'] ?? 25;
 
-        $data = $model::query();
+        $data = $this->model::query();
+
+        if (isset($requestQuery['filters'])) {
+            $produk = new $this->model();
+
+            $column = $produk->getConnection()
+                            ->getSchemaBuilder()
+                            ->getColumnListing(
+                                $produk->getTable()
+                            );
+
+            foreach($requestQuery['filters'] as $key => $value) {
+                $filters = explode(",", $value);
+                
+                if (in_array($key, $column)) {
+                    foreach ($filters as $item) {
+                        $data = $data->where($key, 'like', "%".$item."%");
+                    }
+                }
+            }
+        }
 
         if(isset($requestQuery['sortBy'])) {
-            $order = $order->orderBy($requestQuery['sortBy'], $requestQuery['dir']);
+            $data = $data->orderBy($requestQuery['sortBy'], $requestQuery['dir']);
         }
         
-        $order = $order->paginate($limit);
+        $data = $data->paginate($limit);
     
-        return response()->json($order);
+        return response()->json($data);
     }
 
     /**
