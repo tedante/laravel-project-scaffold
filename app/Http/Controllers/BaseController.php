@@ -53,8 +53,21 @@ class BaseController extends Controller
                         ->getColumnListing(
                             $model->getTable()
                         );
+        $relation = $model->getAllRelation();
 
-        $data = $model::query();
+        $with = [];
+
+        if (isset($requestQuery['include'])) {
+            $include = explode(",", $requestQuery['include']);
+
+            foreach ($include as $item) {
+                if(in_array($item,$relation)) {
+                    array_push($with, $item);
+                }
+            }
+        }
+        // dd($with);
+        $data = $model::with($with);
 
         if (isset($requestQuery['filters'])) {
             foreach($requestQuery['filters'] as $key => $value) {
