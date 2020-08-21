@@ -53,6 +53,7 @@ class BaseController extends Controller
                         ->getColumnListing(
                             $model->getTable()
                         );
+
         $relation = $model->getAllRelation();
 
         $with = [];
@@ -66,7 +67,7 @@ class BaseController extends Controller
                 }
             }
         }
-        // dd($with);
+        
         $data = $model::with($with);
 
         if (isset($requestQuery['filters'])) {
@@ -152,9 +153,25 @@ class BaseController extends Controller
      */
     public function show($id)
     {
+        $requestQuery = request()->query();
+        
         $model = new $this->model();
 
-        $data = $model->find($id);
+        $relation = $model->getAllRelation();
+
+        $with = [];
+
+        if (isset($requestQuery['include'])) {
+            $include = explode(",", $requestQuery['include']);
+
+            foreach ($include as $item) {
+                if(in_array($item,$relation)) {
+                    array_push($with, $item);
+                }
+            }
+        }
+        
+        $data = $model::with($with)->find($id);
 
         if(!$data) {
             return response()->json([
