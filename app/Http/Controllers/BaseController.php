@@ -171,7 +171,45 @@ class BaseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $requestJson = $request->json()->all();
+
+        if (isset($this->validation)) {
+            $validation = Validator::make($requestJson, $this->validation);
+    
+            if($validation->fails()) {
+                return response()->json([
+                    "message" => $validation->messages()
+                ], 422);
+            }
+
+            $model = new $this->model();
+
+            $data = $model->find($id);
+
+            if(!$data) {
+                return response()->json([
+                    "message" => 'Data Not Found'
+                ], 404);
+            }
+
+            try{
+                DB::beginTransaction();
+    
+                $data->update($requestJson);
+
+                DB::commit();
+        
+                return response()->json($data);
+            } catch (Exception $e) {
+              DB::rollback();
+        
+              throw $e;
+            }
+        }
+
+        return response()->json([
+            "message" => "Validation is error"
+        ], 400);
     }
 
     /**
@@ -181,6 +219,20 @@ class BaseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $model = new $this->model();
+
+        $data = $model->find($id);
+
+        if(!$data) {
+            return response()->json([
+                "message" => 'Data Not Found'
+            ], 404);
+        }
+
+        $data->delete();
+        
+        return response()->json([
+            "message" => "Data has been deleted"
+        ], 204);
     }
 }
