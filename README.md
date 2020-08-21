@@ -17,11 +17,11 @@ On this app is include:
 3. On terminal run "php artisan migrate --seed"
 4. On terminal run "php artisan passport::install"
 5. After step 4 you can check the login and register.
-6. If you want create new module. Create a migration and model then copy a controller code down below and save controller to name you want.
+6. If you want create new module. Create a migration and model then copy and rewrite a controller and model code down below and save controller to name you want.
 7. Add route resource to new controller.
 8. Now you can access route CRUD for that model.
 
-### ExampleController
+### Example Controller
 ```
 <?php
 
@@ -48,5 +48,56 @@ class ExampleController extends BaseController
     'discount_percentage' => 'required|numeric',
     'is_active' => 'required|boolean'
   ];
+}
+```
+
+### Example Mode
+```
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Example extends Model
+{
+  
+  protected $fillable = [
+    'unit_id',
+    'category_id',
+    'material_type_id',
+    'material_group',
+    'name',
+    'code',
+    'excerpt',
+    'description',
+    'document_link',
+    'plant',
+    'prices',
+    'discount_percentage',
+    'is_active'
+  ];
+
+  public function getAllRelation() {
+    // return name of all relation function 
+    return [
+      'unit',
+      'category',
+      'material_type'
+    ];
+  }
+
+  public function unit() {
+    return $this->belongsTo(Unit::class);
+  }
+
+  public function category() {
+    return $this->belongsTo(Category::class);
+  }
+
+  public function material_type(){
+    return $this->belongsTo(MaterialType::class);
+  }
+
 }
 ```
