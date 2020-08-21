@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-// use App\Notifications\AccountActivate;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -66,7 +65,6 @@ class AuthController extends Controller
     if(!Auth::attempt($credentials)) {
       throw new AuthenticationException('Email or password you entered is incorrect!');
     }
-
 
     try {
       $user = Auth::user();
