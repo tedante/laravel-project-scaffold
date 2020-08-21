@@ -139,7 +139,17 @@ class BaseController extends Controller
      */
     public function show($id)
     {
-        //
+        $model = new $this->model();
+
+        $data = $model->find($id);
+
+        if(!$data) {
+            return response()->json([
+                "message" => 'Data Not Found'
+            ], 404);
+        }
+        
+        return response()->json($data);
     }
 
     /**
