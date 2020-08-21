@@ -1,6 +1,6 @@
 
 ## Laravel Project Scaffold
-This is a web application based on laravel framework with some code for a simple project.
+This is an application based on laravel framework with some code for a general api project.
 
 On this app is include:
 - [fruitcake/laravel-cors](https://github.com/fruitcake/laravel-cors/)
