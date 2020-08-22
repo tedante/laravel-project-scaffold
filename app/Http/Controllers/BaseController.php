@@ -34,7 +34,7 @@ class BaseController extends Controller
 
         $validation = Validator::make($requestQuery, [
           'page' => 'integer|min:1',
-          'perPage' => 'integer|min:1',
+          'limit' => 'integer|min:1',
           'order-by' => 'required_with:sort-by|in:asc,desc',
           'min' => 'regex:/^\d+(\.\d{1,2})?$/',
           'max' => 'regex:/^\d+(\.\d{1,2})?$/'
@@ -46,7 +46,7 @@ class BaseController extends Controller
             ], 422);
         }
 
-        $limit = $requestQuery['perPage'] ?? 25;
+        $limit = $requestQuery['limit'] ?? 25;
         
         $model = new $this->model();
 
