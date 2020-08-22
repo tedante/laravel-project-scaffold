@@ -22,6 +22,8 @@ Route::prefix('v1')->group(function() {
 
     Route::middleware('json')->group(function() {
         Route::post('login', 'AuthController@login');
+        Route::resource('materials', 'MaterialController');
+        Route::get('materials/export/excel', 'MaterialController@export');
     });
 
 });
