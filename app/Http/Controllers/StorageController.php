@@ -27,8 +27,9 @@ class StorageController extends Controller
       };
   
       $path = 'public/'.$req['folder'];
-  
-      $upload = Storage::put($path, $req['file']);
+      $name = rand(10000,99999)."-".str_replace(" ", "_", $request->file->getClientOriginalName());
+
+      $upload = Storage::putFileAs($path, $req['file'], $name);
       $url = Storage::url($upload);
   
       return response()->json([ 'success' => true, 'url' => config('app.url').$url ]);
