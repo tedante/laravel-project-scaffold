@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function() {
 
+    Route::post('upload', 'StorageController@upload');
+
     Route::middleware('json')->group(function() {
         Route::post('login', 'AuthController@login');
         Route::resource('materials', 'MaterialController');
