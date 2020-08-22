@@ -20,8 +20,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function() {
 
+    Route::post('upload', 'StorageController@upload');
+
     Route::middleware('json')->group(function() {
         Route::post('login', 'AuthController@login');
+        
+        /**
+         * Example Routes :
+         * Route::resource('example', 'ExampleController');
+         * Route::get('example/export/excel', 'ExampleController@export');
+         */
     });
 
 });
