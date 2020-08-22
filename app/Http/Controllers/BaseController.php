@@ -14,6 +14,8 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\QueryException;
+use App\Exports\GeneralExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BaseController extends Controller
 {
@@ -264,5 +266,26 @@ class BaseController extends Controller
         return response()->json([
             "message" => "Data has been deleted"
         ], 204);
+    }
+
+    public function export() 
+    {
+        $requestQuery = request()->query();
+
+        $column = [];
+
+        if (isset($requestQuery['column'])) {
+            $value = explode(",", $requestQuery['column']);
+
+            foreach ($value as $item) {
+                if(in_array($item,$relation)) {
+                    array_push($column, $item);
+                }
+            }
+        }
+        
+        $model = new $this->model;
+        
+        return Excel::download(new GeneralExport($this->model, $column, $requestQuery['from'] ?? null, $requestQuery['to'] ?? null), ucfirst(str_replace("_", " ", $model->getTable())).'.xlsx');
     }
 }
