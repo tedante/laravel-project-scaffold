@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\QueryException;
 use App\Exports\GeneralExport;
-use App\Imports\ImportExport;
+use App\Imports\GeneralImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BaseController extends Controller
@@ -285,15 +285,13 @@ class BaseController extends Controller
             }
         }
         
-        $model = new $this->model;
-        
         return Excel::download(new GeneralExport($this->model, $column, $requestQuery['from'] ?? null, $requestQuery['to'] ?? null), ucfirst(str_replace("_", " ", $model->getTable())).'.xlsx');
     }
 
     public function import() 
     {
         $validator = Validator::make(request()->all(),[
-            'file_excel' => 'required|mimes:xlsx,xls',
+            'file' => 'required|mimes:xlsx,xls',
         ]);
 
         try{
@@ -301,12 +299,17 @@ class BaseController extends Controller
                 throw new ValidationException($validator);
             }
 
-            Excel::import(new GeneralImport, request()->file('file'));
+            DB::beginTransaction();
 
+            Excel::import(new GeneralImport($this->model), request()->file('file'));
+
+            DB::commit();
             return response()->json([
                 'message' => 'Import file excel success.'
             ], 200);
         } catch(Exception $e){
+            DB::rollback();
+
             return response()->json([
                 'message' => $e->getMessage()
             ], 400);
