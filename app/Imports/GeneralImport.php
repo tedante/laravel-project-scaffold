@@ -10,10 +10,13 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 
 class GeneralImport implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 {
+    protected $model; 
+
     public function __construct($model = null) 
     {
         $this->model = new $model;      
     }
+    
     /**
     * @param Collection $collection
     */
@@ -26,17 +29,15 @@ class GeneralImport implements ToCollection, WithHeadingRow, WithCalculatedFormu
                             );
         
         $data = [];
-
-        foreach ($listColumn as $key => $value) {
-           $data[$value] = ucfirst(str_replace("_", " ", $value));
-        }
-
-dd($data);
-
-        foreach ($rows as $row) {
+ 
+        foreach ($collection as $row) {
+            foreach ($listColumn as $key => $value) {
+               $data[$value] = $row[$value];
+            }
+            
             $this->model->updateOrCreate(
                 ['id' => $row['id']], 
-                []
+                $data
             );
         }
     }
