@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Exceptions\UnprocessEntityException;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
   public function login(Request $request) {
     $requestBody = $request->json()->all();
     $validation = Validator::make($requestBody, [
@@ -26,19 +26,7 @@ class AuthController extends Controller
 
     if($validation->fails()) throw new ValidationException($validation);
 
-    return $this->doLogin($requestBody['email'], $requestBody['password'], 'partner');
-  }
-
-  public function loginAdmin(Request $request) {
-    $requestBody = $request->json()->all();
-    $validation = Validator::make($requestBody, [
-      'email' => 'required|string|email',
-      'password' => 'required|string'
-    ]);
-
-    if($validation->fails()) throw new ValidationException($validation);
-
-    return $this->doLogin($requestBody['email'], $requestBody['password'], 'superadmin');
+    return $this->doLogin($requestBody['email'], $requestBody['password']);
   }
 
   private function handleResponse ($response) {
@@ -55,7 +43,7 @@ class AuthController extends Controller
     ], 200);
   }
 
-  private function doLogin($email, $password, $role) {
+  private function doLogin($email, $password) {
     $credentials = [
       'email' => $email, 
       'password' => $password,
@@ -78,7 +66,10 @@ class AuthController extends Controller
       $token = $tokenResult->token;
       
       $token->save();
-  
+      
+      $user->login_at = Carbon::now();
+      $user->save();
+      
       $response = [
         'user' => $user, 
         'token' => $tokenResult 
@@ -160,6 +151,26 @@ class AuthController extends Controller
     return response()->json([
       'message' => 'Verification Email has been sent to your mail'
     ]);
+  }
+
+  public function register(Request $request) {
+    $requestBody = $request->json()->all();
+
+    $validation = Validator::make($requestBody, [
+      'name' => 'string|required',
+      'email' => 'email|unique:users|required',
+      'password' => 'string',
+      'role_id' => 'integer|exists:roles,id|required',
+      'is_active' => 'boolean|required'
+    ]);
+
+    if($validation->fails()) throw new ValidationException($validation);
+    
+    $requestBody['password'] = Hash::make($requestBody['password']);
+    // dd($requestBody);
+    $data = User::create($requestBody);
+
+    return response()->json($data);
   }
 
 }

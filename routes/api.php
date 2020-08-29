@@ -23,13 +23,15 @@ Route::prefix('v1')->group(function() {
     Route::post('upload', 'StorageController@upload');
 
     Route::middleware('json')->group(function() {
-        Route::post('login', 'AuthController@login');
-        
-        /**
-         * Example Routes :
-         * Route::resource('example', 'ExampleController');
-         * Route::get('example/export/excel', 'ExampleController@export');
-         */
+        Route::post('login', 'AuthController@login')->name('login');
+        Route::post('register', 'AuthController@register')->name('register');
+      
+        Route::middleware('auth:api')->group(function() {
+            Route::resource('materials', 'MaterialController');
+            Route::get('materials/export/excel', 'MaterialController@export');
+            Route::post('materials/import/excel', 'MaterialController@import');
+            Route::post('orders/import/excel', 'OrderController@import');
+        });
     });
 
 });
