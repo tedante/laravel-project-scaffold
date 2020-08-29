@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Exceptions\UnprocessEntityException;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
   public function login(Request $request) {
     $requestBody = $request->json()->all();
     $validation = Validator::make($requestBody, [
@@ -160,6 +160,26 @@ class AuthController extends Controller
     return response()->json([
       'message' => 'Verification Email has been sent to your mail'
     ]);
+  }
+
+  public function register(Request $request) {
+    $requestBody = $request->json()->all();
+
+    $validation = Validator::make($requestBody, [
+      'name' => 'string|required',
+      'email' => 'email|unique:users|required',
+      'password' => 'string',
+      'role_id' => 'integer|exists:roles,id|required',
+      'is_active' => 'boolean|required'
+    ]);
+
+    if($validation->fails()) throw new ValidationException($validation);
+    
+    $requestBody['password'] = Hash::make($requestBody['password']);
+    // dd($requestBody);
+    $data = User::create($requestBody);
+
+    return response()->json($data);
   }
 
 }
