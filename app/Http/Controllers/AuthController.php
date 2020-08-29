@@ -26,19 +26,7 @@ class AuthController extends Controller
 
     if($validation->fails()) throw new ValidationException($validation);
 
-    return $this->doLogin($requestBody['email'], $requestBody['password'], 'partner');
-  }
-
-  public function loginAdmin(Request $request) {
-    $requestBody = $request->json()->all();
-    $validation = Validator::make($requestBody, [
-      'email' => 'required|string|email',
-      'password' => 'required|string'
-    ]);
-
-    if($validation->fails()) throw new ValidationException($validation);
-
-    return $this->doLogin($requestBody['email'], $requestBody['password'], 'superadmin');
+    return $this->doLogin($requestBody['email'], $requestBody['password']);
   }
 
   private function handleResponse ($response) {
@@ -55,7 +43,7 @@ class AuthController extends Controller
     ], 200);
   }
 
-  private function doLogin($email, $password, $role) {
+  private function doLogin($email, $password) {
     $credentials = [
       'email' => $email, 
       'password' => $password,
@@ -78,7 +66,10 @@ class AuthController extends Controller
       $token = $tokenResult->token;
       
       $token->save();
-  
+      
+      $user->login_at = Carbon::now();
+      $user->save();
+      
       $response = [
         'user' => $user, 
         'token' => $tokenResult 
