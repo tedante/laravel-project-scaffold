@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function() {
     Route::middleware('json')->group(function() {
         Route::post('login', 'AuthController@login')->name('login');
         Route::post('register', 'AuthController@register')->name('register');
+      
         Route::middleware('auth:api')->group(function() {
             Route::resource('materials', 'MaterialController');
             Route::get('materials/export/excel', 'MaterialController@export');
